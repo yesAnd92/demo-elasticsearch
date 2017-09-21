@@ -1,27 +1,35 @@
 package com.wyj.demoelasticSearch.service.impl;
 
-import com.wyj.demoelasticSearch.domain.Blog;
-import com.wyj.demoelasticSearch.repository.BlogRepository;
-import com.wyj.demoelasticSearch.service.BlogService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
 
+import com.wyj.demoelasticSearch.service.BlogService;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.client.transport.TransportClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Iterator;
+import java.util.Map;
 
 @Service
-public class BlohServiceImpl implements BlogService {
+public class BlohServiceImpl  implements BlogService{
 
     @Autowired
-    private BlogRepository blogRepository;
+    private TransportClient client;
+
 
     @Override
-    public Page<Blog> getBlogList(String title, String content, Pageable pageable) {
-        return blogRepository.findByTitleOrContent(title,content,pageable);
-    }
+    public void getBlog() {
+        GetResponse response = client.prepareGet("informations","blog","14470115").execute().actionGet();
+        Map<String, Object> rpMap = response.getSource();
+        if (rpMap == null) {
+            System.out.println("empty");
+            return;
+        }
+        Iterator<Map.Entry<String, Object>> rpItor = rpMap.entrySet().iterator();
+        while (rpItor.hasNext()) {
+            Map.Entry<String, Object> rpEnt = rpItor.next();
+            System.out.println(rpEnt.getKey() + " : " + rpEnt.getValue());
+        }
 
-    @Override
-    public Blog findOne(String id) {
-        return blogRepository.findOne(id);
     }
 }
