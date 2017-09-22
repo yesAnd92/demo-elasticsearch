@@ -12,11 +12,19 @@ import java.net.InetAddress;
 @Configuration
 public class EsConfig {
 
+    /**
+     * 配置连接elasticsearch用的client
+     * @user wangyj
+     * @date 2017/9/21 17:40
+     */
     @Bean
     public TransportClient getClient()throws Exception{
-        TransportClient client = TransportClient.builder().build()
+        //若集群的名字更改了（默认为elasticsearch），需要配置setting
+        TransportClient client = TransportClient
+                .builder()
+                .build()
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-        //client.close();
+                //可以添加多个transportAddress
         return client;
 
     }
