@@ -1,4 +1,4 @@
-### java 操作 elasticsearch的一个demo
+### spring boot 整合 elasticsearch的一个demo
 
 #### 两种实现方式
 * 集成spring data elasticsearch--可以查看spring-data-es分支代码

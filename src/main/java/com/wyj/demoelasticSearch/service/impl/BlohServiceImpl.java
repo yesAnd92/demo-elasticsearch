@@ -19,7 +19,7 @@ public class BlohServiceImpl  implements BlogService{
 
     @Override
     public void getBlog() {
-        GetResponse response = client.prepareGet("informations","blog","14470115").execute().actionGet();
+        GetResponse response = client.prepareGet("informations","blog","14470115").get();
         Map<String, Object> rpMap = response.getSource();
         if (rpMap == null) {
             System.out.println("empty");
