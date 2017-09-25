@@ -1,11 +1,16 @@
 package com.wyj.demoelasticSearch;
 
+import org.elasticsearch.action.search.MultiSearchResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.omg.PortableServer.SERVANT_RETENTION_POLICY_ID;
@@ -72,4 +77,32 @@ public class SearchAPITest {
             }
         }
     }
+
+
+    /**
+     * 通过MultiSearchResponse可以分别获取各自的请求响应
+     * @user wangyj 
+     * @date 2017/9/25 11:29
+     */
+    @Test
+    public void multiSearch(){
+        SearchRequestBuilder srb1=client
+                .prepareSearch().setQuery(QueryBuilders.queryStringQuery("天津")).setSize(1);
+
+        SearchRequestBuilder srb2=client
+                .prepareSearch().setQuery(QueryBuilders.matchQuery("title","北京")).setSize(1);
+
+        MultiSearchResponse response = client.prepareMultiSearch()
+                .add(srb1)
+                .add(srb2)
+                .execute().actionGet();
+
+        for (MultiSearchResponse.Item item :response.getResponses()){
+            SearchResponse searchResponse = item.getResponse();
+            System.out.println(searchResponse.getHits().totalHits());
+        }
+    }
+
+
+
 }
